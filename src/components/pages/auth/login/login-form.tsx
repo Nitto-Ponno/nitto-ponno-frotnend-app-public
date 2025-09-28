@@ -17,66 +17,34 @@ import {
 import { Input } from '@/components/ui/input';
 import Link from 'next/link';
 import GoogleIcon from '@/components/shared/svg/google-Icon';
-import { Eye, EyeClosedIcon, Lock, Mail, User, UserPlus } from 'lucide-react';
+import { Eye, EyeClosedIcon, Lock, LogIn, Mail } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 
-// Signup Form Schema (Zod)
+// Login Form Schema (Zod)
 // ===========================
-export const signupFormSchema = z
-  .object({
-    // Full name validation
-    fullName: z.string().trim().min(2, {
-      message: 'Full name must be at least 2 characters.',
-    }),
-
-    // Email validation
-    email: z.email({ message: 'Please enter a valid email address.' }),
-
-    // Strong password validation rules
-    password: z
-      .string()
-      .min(8, { message: 'Password must be at least 8 characters long.' })
-      .regex(/[A-Z]/, {
-        message: 'Password must contain at least one uppercase letter.',
-      })
-      .regex(/[a-z]/, {
-        message: 'Password must contain at least one lowercase letter.',
-      })
-      .regex(/[0-9]/, { message: 'Password must contain at least one number.' })
-      .regex(/[^A-Za-z0-9]/, {
-        message: 'Password must contain at least one special character.',
-      }),
-
-    // Confirm password (must match password)
-    confirmPassword: z.string(),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords don't match",
-    path: ['confirmPassword'],
-  });
+export const loginFormSchema = z.object({
+  email: z.email({ message: 'Please enter a valid email address.' }),
+  password: z.string(),
+});
 
 /* ---------------- Props ---------------- */
 type Props = {
-  onSubmit?: (values: z.infer<typeof signupFormSchema>) => void;
+  onSubmit?: (values: z.infer<typeof loginFormSchema>) => void;
 };
 
 /* ---------------- Component ---------------- */
-const SignupForm = ({ onSubmit }: Props) => {
+const LoginForm = ({ onSubmit }: Props) => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] =
-    useState(false);
 
-  const form = useForm<z.infer<typeof signupFormSchema>>({
-    resolver: zodResolver(signupFormSchema),
+  const form = useForm<z.infer<typeof loginFormSchema>>({
+    resolver: zodResolver(loginFormSchema),
     defaultValues: {
-      fullName: '',
       email: '',
       password: '',
-      confirmPassword: '',
     },
   });
 
-  const handleSubmit = (values: z.infer<typeof signupFormSchema>) => {
+  const handleSubmit = (values: z.infer<typeof loginFormSchema>) => {
     if (onSubmit) {
       onSubmit(values);
     } else {
@@ -91,30 +59,9 @@ const SignupForm = ({ onSubmit }: Props) => {
         className="text-sidebar-foreground space-y-6 rounded-lg border p-6"
       >
         <div className="text-center text-black">
-          <p className="text-3xl font-bold">Sign Up</p>
-          <p className="text-sm">
-            Create an account by sign up with provider or email, password
-          </p>
+          <p className="text-3xl font-bold">Login</p>
+          <p className="text-sm">Login with your email and password</p>
         </div>
-        {/* Full Name */}
-        <FormField
-          control={form.control}
-          name="fullName"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Full Name</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="Write your full name"
-                  {...field}
-                  prefix={<User className="text-sidebar-foreground size-4" />}
-                  className="h-12"
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
 
         {/* Email */}
         <FormField
@@ -170,54 +117,20 @@ const SignupForm = ({ onSubmit }: Props) => {
           )}
         />
 
-        {/* Confirm Password */}
-        <FormField
-          control={form.control}
-          name="confirmPassword"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Confirm Password</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="Enter password again"
-                  type={isConfirmPasswordVisible ? 'text' : 'password'}
-                  {...field}
-                  prefix={<Lock className="text-sidebar-foreground size-4" />}
-                  className="h-12"
-                  suffix={
-                    <span
-                      onClick={() =>
-                        setIsConfirmPasswordVisible(!isConfirmPasswordVisible)
-                      }
-                      className="cursor-pointer"
-                    >
-                      {isConfirmPasswordVisible ? (
-                        <Eye className="text-sidebar-foreground size-4" />
-                      ) : (
-                        <EyeClosedIcon className="text-sidebar-foreground size-4" />
-                      )}
-                    </span>
-                  }
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
         <div className="flex justify-end">
           <Link
-            href={'/auth/login'}
+            href={'#'}
             className="hover:text-chart-2 text-left text-sm hover:underline"
           >
-            Already have account?
+            Forgot password?
           </Link>
         </div>
 
         {/* Submit */}
         <div className="space-y-3">
           <Button type="submit" size={'xl'} className="w-full font-bold">
-            <UserPlus />
-            Register
+            <LogIn />
+            Login
           </Button>
           <Separator
             className="font-bold text-red-500"
@@ -232,17 +145,17 @@ const SignupForm = ({ onSubmit }: Props) => {
             variant={'tertiary'}
           >
             <GoogleIcon />
-            Sign Up With Google
+            Login With Google
           </Button>
         </div>
 
         <div className="flex justify-center gap-3 text-sm">
-          Already have account?
+          Don&apos;t have an account?
           <Link
-            href={'/auth/login'}
+            href={'/auth/signup'}
             className="hover:text-chart-2 font-semibold text-black hover:underline"
           >
-            Login
+            Sign Up
           </Link>
         </div>
       </form>
@@ -250,4 +163,4 @@ const SignupForm = ({ onSubmit }: Props) => {
   );
 };
 
-export default SignupForm;
+export default LoginForm;
