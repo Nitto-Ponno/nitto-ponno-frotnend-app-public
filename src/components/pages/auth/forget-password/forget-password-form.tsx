@@ -17,34 +17,30 @@ import {
 import { Input } from '@/components/ui/input';
 import Link from 'next/link';
 import GoogleIcon from '@/components/shared/svg/google-Icon';
-import { Eye, EyeClosedIcon, Lock, LogIn, Mail } from 'lucide-react';
+import { Mail, RotateCw } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 
-// Login Form Schema (Zod)
+// Forget PasswordForm Form Schema (Zod)
 // ===========================
-export const loginFormSchema = z.object({
+export const forgetPasswordFormSchema = z.object({
   email: z.email({ message: 'Please enter a valid email address.' }),
-  password: z.string(),
 });
 
 /* ---------------- Props ---------------- */
 type Props = {
-  onSubmit?: (values: z.infer<typeof loginFormSchema>) => void;
+  onSubmit?: (values: z.infer<typeof forgetPasswordFormSchema>) => void;
 };
 
 /* ---------------- Component ---------------- */
-const LoginForm = ({ onSubmit }: Props) => {
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-
-  const form = useForm<z.infer<typeof loginFormSchema>>({
-    resolver: zodResolver(loginFormSchema),
+const ForgetPasswordForm = ({ onSubmit }: Props) => {
+  const form = useForm<z.infer<typeof forgetPasswordFormSchema>>({
+    resolver: zodResolver(forgetPasswordFormSchema),
     defaultValues: {
       email: '',
-      password: '',
     },
   });
 
-  const handleSubmit = (values: z.infer<typeof loginFormSchema>) => {
+  const handleSubmit = (values: z.infer<typeof forgetPasswordFormSchema>) => {
     if (onSubmit) {
       onSubmit(values);
     } else {
@@ -59,8 +55,8 @@ const LoginForm = ({ onSubmit }: Props) => {
         className="text-sidebar-foreground space-y-6 rounded-lg border p-6"
       >
         <div className="text-center text-black">
-          <p className="text-3xl font-bold">Login</p>
-          <p className="text-sm">Login with your email and password</p>
+          <p className="text-3xl font-bold">Forget Password</p>
+          <p className="text-sm">Reset Your Password</p>
         </div>
 
         {/* Email */}
@@ -72,7 +68,7 @@ const LoginForm = ({ onSubmit }: Props) => {
               <FormLabel>Email</FormLabel>
               <FormControl>
                 <Input
-                  placeholder="Write your email"
+                  placeholder="Write your register email"
                   type="email"
                   {...field}
                   prefix={<Mail className="text-sidebar-foreground size-4" />}
@@ -84,53 +80,20 @@ const LoginForm = ({ onSubmit }: Props) => {
           )}
         />
 
-        {/* Password */}
-        <FormField
-          control={form.control}
-          name="password"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Password</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="Enter your password"
-                  type={isPasswordVisible ? 'text' : 'password'}
-                  {...field}
-                  prefix={<Lock className="text-sidebar-foreground size-4" />}
-                  suffix={
-                    <span
-                      onClick={() => setIsPasswordVisible(!isPasswordVisible)}
-                      className="cursor-pointer"
-                    >
-                      {isPasswordVisible ? (
-                        <Eye className="text-sidebar-foreground size-4" />
-                      ) : (
-                        <EyeClosedIcon className="text-sidebar-foreground size-4" />
-                      )}
-                    </span>
-                  }
-                  className="h-12"
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
         <div className="flex justify-end">
           <Link
-            href={'/auth/forget-password'}
+            href={'/auth/login'}
             className="hover:text-chart-2 text-left text-sm hover:underline"
           >
-            Forgot password?
+            Login?
           </Link>
         </div>
 
         {/* Submit */}
         <div className="space-y-3">
           <Button type="submit" size={'xl'} className="w-full font-bold">
-            <LogIn />
-            Login
+            <RotateCw />
+            Recover password
           </Button>
           <Separator
             className="font-bold text-red-500"
@@ -145,7 +108,7 @@ const LoginForm = ({ onSubmit }: Props) => {
             variant={'tertiary'}
           >
             <GoogleIcon />
-            Login With Google
+            Signup With Google
           </Button>
         </div>
 
@@ -163,4 +126,4 @@ const LoginForm = ({ onSubmit }: Props) => {
   );
 };
 
-export default LoginForm;
+export default ForgetPasswordForm;
