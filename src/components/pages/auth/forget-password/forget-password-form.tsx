@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { memo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -26,13 +26,8 @@ export const forgetPasswordFormSchema = z.object({
   email: z.email({ message: 'Please enter a valid email address.' }),
 });
 
-/* ---------------- Props ---------------- */
-type Props = {
-  onSubmit?: (values: z.infer<typeof forgetPasswordFormSchema>) => void;
-};
-
 /* ---------------- Component ---------------- */
-const ForgetPasswordForm = ({ onSubmit }: Props) => {
+const ForgetPasswordForm = () => {
   const form = useForm<z.infer<typeof forgetPasswordFormSchema>>({
     resolver: zodResolver(forgetPasswordFormSchema),
     defaultValues: {
@@ -41,11 +36,7 @@ const ForgetPasswordForm = ({ onSubmit }: Props) => {
   });
 
   const handleSubmit = (values: z.infer<typeof forgetPasswordFormSchema>) => {
-    if (onSubmit) {
-      onSubmit(values);
-    } else {
-      console.log(values);
-    }
+    // console.log(values)
   };
 
   return (
@@ -126,4 +117,4 @@ const ForgetPasswordForm = ({ onSubmit }: Props) => {
   );
 };
 
-export default ForgetPasswordForm;
+export default memo(ForgetPasswordForm);

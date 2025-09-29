@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { memo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -55,13 +55,8 @@ export const signupFormSchema = z
     path: ['confirmPassword'],
   });
 
-/* ---------------- Props ---------------- */
-type Props = {
-  onSubmit?: (values: z.infer<typeof signupFormSchema>) => void;
-};
-
 /* ---------------- Component ---------------- */
-const SignupForm = ({ onSubmit }: Props) => {
+const SignupForm = () => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] =
     useState(false);
@@ -77,11 +72,7 @@ const SignupForm = ({ onSubmit }: Props) => {
   });
 
   const handleSubmit = (values: z.infer<typeof signupFormSchema>) => {
-    if (onSubmit) {
-      onSubmit(values);
-    } else {
-      console.log(values);
-    }
+    // console.log(values);
   };
 
   return (
@@ -250,4 +241,4 @@ const SignupForm = ({ onSubmit }: Props) => {
   );
 };
 
-export default SignupForm;
+export default memo(SignupForm);
