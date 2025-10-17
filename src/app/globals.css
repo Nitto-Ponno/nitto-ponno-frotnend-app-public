@@ -189,4 +189,7 @@ body {
   body {
     @apply bg-background text-foreground;
   }
+  .my-container {
+    @apply mx-auto w-10/12;
+  }
 }
