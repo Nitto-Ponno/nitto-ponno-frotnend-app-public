@@ -190,6 +190,6 @@ body {
     @apply bg-background text-foreground;
   }
   .my-container {
-    @apply mx-auto p-6 md:w-10/12 md:p-0;
+    @apply mx-auto w-full p-3 md:w-10/12;
   }
 }
