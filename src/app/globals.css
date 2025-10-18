@@ -190,7 +190,7 @@ body {
     @apply bg-background text-foreground;
   }
   .my-container {
-    @apply mx-auto w-10/12;
+    @apply mx-auto w-full p-3 md:w-10/12;
   }
   .section-heading {
     @apply relative mb-12 text-center text-[28px] font-bold text-black;
