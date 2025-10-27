@@ -4,24 +4,18 @@ import Navbar from '@/components/shared/nav/nav-bar';
 import TopBar from '@/components/shared/nav/top-bar';
 import React from 'react';
 
+export const banners = [
+  {
+    _id: '1',
+    image: '/banner_images/image1.png',
+  },
+  {
+    _id: '2',
+    image: '/banner_images/image2.png',
+  },
+];
+
 const PublicLayout = ({ children }: { children: React.ReactNode }) => {
-  const banners = [
-    {
-      _id: '1',
-      image:
-        'https://www.lazzpharma.com/Content/ImageData/Banner/Orginal/00755636-97b8-41e7-be39-f594b4189189/banner.webp',
-    },
-    {
-      _id: '2',
-      image:
-        'https://www.lazzpharma.com/Content/ImageData/Banner/Orginal/98ddfb02-62bc-4613-948a-60251d54b0d8/banner.webp',
-    },
-    {
-      _id: '3',
-      image:
-        'https://www.lazzpharma.com/Content/ImageData/Banner/Orginal/fe4288bc-33e2-4327-a47e-fd796aadf454/banner.webp',
-    },
-  ];
   return (
     <main>
       <TopBar />
