@@ -516,3 +516,114 @@ export const products = [
   //     image: `other/uniform.jpg`,
   //   },
 ];
+
+interface ServiceForIndividualItem {
+  _id: string;
+  service: {
+    id: string;
+    name: string;
+    priceType: string;
+    productType: string;
+  };
+  description: string;
+  price: number;
+  duration: number;
+  productId: string;
+  serviceId: string;
+}
+
+export const servicesForIndividualItems: ServiceForIndividualItem[] = [
+  {
+    _id: '1',
+    service: {
+      id: 'wash_iron',
+      name: 'Iron and Fold',
+      priceType: 'fixed',
+      productType: 'pcs',
+    },
+    description: 'Wash and iron your clothes',
+    price: 30,
+    duration: 30,
+    productId: 'shirt',
+    serviceId: 'wash_iron',
+  },
+  {
+    _id: '2',
+    service: {
+      id: 'dry_clean',
+      name: 'Dry Clean',
+      priceType: 'fixed',
+      productType: 'pcs',
+    },
+    description: 'Dry clean your clothes',
+    price: 100,
+    duration: 48,
+    productId: 'shirt',
+    serviceId: 'dry_clean',
+  },
+  {
+    _id: '3',
+    service: {
+      id: 'iron_only',
+      name: 'Iron Only',
+      priceType: 'fixed',
+      productType: 'pcs',
+    },
+    description: 'Iron only your clothes',
+    price: 20,
+    duration: 20,
+    productId: 'shirt',
+    serviceId: 'iron_only',
+  },
+  {
+    _id: '4',
+    service: {
+      id: 'wash_iron',
+      name: 'Iron and Fold',
+      priceType: 'fixed',
+      productType: 'pcs',
+    },
+    description: 'Wash and iron your clothes',
+    price: 40,
+    duration: 30,
+    productId: 'pant',
+    serviceId: 'wash_iron',
+  },
+];
+
+export interface CartItem {
+  product: {
+    _id: string;
+    name: string;
+    image: string;
+  };
+  serviceId: string;
+  quantity: number;
+  unitPrice: number;
+  currency: string;
+}
+
+export const cartData: CartItem[] = [
+  {
+    product: {
+      _id: 'shirt',
+      name: 'Shirt',
+      image: 'shirt.png',
+    },
+    serviceId: 'wash_iron',
+    quantity: 2,
+    unitPrice: 45,
+    currency: 'BDT',
+  },
+  {
+    product: {
+      _id: 'pant',
+      name: 'Pant',
+      image: 'pant.png',
+    },
+    serviceId: 'wash_iron',
+    quantity: 1,
+    unitPrice: 50,
+    currency: 'BDT',
+  },
+];
