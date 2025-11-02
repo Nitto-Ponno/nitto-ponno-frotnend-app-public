@@ -51,9 +51,9 @@ const Navbar = () => {
             <span aria-label="Notifications" className="cursor-pointer">
               <Bell className="stroke-accent-foreground h-5 w-5" />
             </span>
-            <span className="cursor-pointer">
+            <Link href={'/cart'} aria-label="Cart">
               <ShoppingBag className="stroke-accent-foreground h-5 w-5" />
-            </span>
+            </Link>
             <span className="cursor-pointer">
               <User className="stroke-accent-foreground h-5 w-5" />
             </span>

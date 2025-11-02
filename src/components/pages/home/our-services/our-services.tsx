@@ -9,44 +9,27 @@ const OurServices = () => {
         name: 'Laundry',
         _id: '11',
         icon: <LaundryIcon className="size-14" />,
-        link: '/services/laundry4',
+        link: '/services/laundry',
       },
       {
-        name: 'Laundry Phirmecy',
+        name: 'Pharmacy',
         _id: '12',
         icon: <LaundryIcon className="size-14" />,
-        link: '/services/laundryh',
+        link: '/services/pharmacy',
       },
+
       {
-        name: 'Laundry',
-        _id: '13',
-        icon: <LaundryIcon className="size-14" />,
-        link: '/services/laundryq',
-      },
-      {
-        name: 'Laundry',
+        name: 'Grocery',
         _id: '343',
         icon: <LaundryIcon className="size-14" />,
-        link: '/services/laundryt',
-      },
-      {
-        name: 'Laundry',
-        _id: '15',
-        icon: <LaundryIcon className="size-14" />,
-        link: '/services/laundryq',
-      },
-      {
-        name: 'Laundry',
-        _id: '18',
-        icon: <LaundryIcon className="size-14" />,
-        link: '/services/laundrys',
+        link: '/services/grocery',
       },
     ];
   return (
     <div className="py-12">
       <div className="my-container">
         <p className="section-heading">Our Services</p>
-        <div className="flex flex-wrap items-center justify-between gap-6">
+        <div className="flex flex-wrap items-center justify-center gap-10 md:gap-20 lg:gap-32">
           {ourServices.map((service) => (
             <div key={service._id}>
               <Link
