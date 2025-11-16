@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import SignupForm from '@/components/pages/auth/signup/signup-form';
 
 const Signup = () => {
   return (
     <div className="mx-auto w-lg">
-      <SignupForm />
+      <Suspense fallback={null}>
+        <SignupForm />
+      </Suspense>
     </div>
   );
 };

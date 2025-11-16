@@ -1,10 +1,12 @@
 import LoginForm from '@/components/pages/auth/login/login-form';
-import React from 'react';
+import React, { Suspense } from 'react';
 
 const Login = () => {
   return (
     <div className="mx-auto w-lg">
-      <LoginForm />
+      <Suspense fallback={null}>
+        <LoginForm />
+      </Suspense>
     </div>
   );
 };

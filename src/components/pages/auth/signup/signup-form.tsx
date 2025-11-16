@@ -17,38 +17,38 @@ import {
 import { Input } from '@/components/ui/input';
 import Link from 'next/link';
 import GoogleIcon from '@/components/shared/svg/google-Icon';
-import { Eye, EyeClosedIcon, Lock, Mail, User, UserPlus } from 'lucide-react';
+import {
+  Eye,
+  EyeClosedIcon,
+  Loader2,
+  Lock,
+  Mail,
+  User,
+  UserPlus,
+} from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
+import { instance } from '@/lib/axios/axiosInstance';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { toast } from 'sonner';
+import { AxiosError } from 'axios';
 
 // Signup Form Schema (Zod)
 // ===========================
 export const signupFormSchema = z
   .object({
-    // Full name validation
-    fullName: z.string().trim().min(2, {
-      message: 'Full name must be at least 2 characters.',
-    }),
-
-    // Email validation
-    email: z.email({ message: 'Please enter a valid email address.' }),
-
-    // Strong password validation rules
+    email: z.string().email({ message: 'Please enter a valid email address.' }),
     password: z
       .string()
-      .min(8, { message: 'Password must be at least 8 characters long.' })
-      .regex(/[A-Z]/, {
-        message: 'Password must contain at least one uppercase letter.',
-      })
-      .regex(/[a-z]/, {
-        message: 'Password must contain at least one lowercase letter.',
-      })
-      .regex(/[0-9]/, { message: 'Password must contain at least one number.' })
-      .regex(/[^A-Za-z0-9]/, {
-        message: 'Password must contain at least one special character.',
-      }),
-
-    // Confirm password (must match password)
+      .min(8, 'Password must be at least 8 characters long.')
+      .regex(/[A-Z]/, 'Must contain at least one uppercase letter.')
+      .regex(/[a-z]/, 'Must contain at least one lowercase letter.')
+      .regex(/[0-9]/, 'Must contain at least one number.')
+      .regex(/[^A-Za-z0-9]/, 'Must contain at least one special character.'),
     confirmPassword: z.string(),
+    phoneNumber: z.string().min(10, 'Phone number must be at least 10 digits.'),
+    firstName: z.string().min(2, 'First name is required'),
+    middleName: z.string().optional(),
+    lastName: z.string().min(2, 'Last Name is required'),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords don't match",
@@ -61,18 +61,60 @@ const SignupForm = () => {
   const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] =
     useState(false);
 
+  const searchParams = useSearchParams();
+  const from = searchParams.get('from');
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+
   const form = useForm<z.infer<typeof signupFormSchema>>({
     resolver: zodResolver(signupFormSchema),
     defaultValues: {
-      fullName: '',
       email: '',
       password: '',
       confirmPassword: '',
+      phoneNumber: '',
+      firstName: '',
+      lastName: '',
+      middleName: '',
     },
   });
 
-  const handleSubmit = (values: z.infer<typeof signupFormSchema>) => {
-    // console.log(values);
+  const handleSubmit = async (values: z.infer<typeof signupFormSchema>) => {
+    const { email, password, phoneNumber, firstName, middleName, lastName } =
+      values;
+
+    const payload = {
+      email,
+      password,
+      phoneNumber,
+      name: {
+        firstName,
+        middleName: middleName || '',
+        lastName: lastName || '',
+      },
+    };
+
+    try {
+      setIsLoading(true);
+      const { data } = await instance.post('/auth/customer-register', payload);
+
+      toast.success(data?.message);
+
+      if (data?.success) {
+        setIsLoading(false);
+        const redirectUrl = from
+          ? `/auth/verify?email=${email}&from=${encodeURIComponent(from)}`
+          : `/auth/verify?email=${email}`;
+
+        router.push(redirectUrl);
+      }
+    } catch (error) {
+      toast.error(
+        ((error as AxiosError).response?.data as { message?: string })
+          ?.message || 'An error occurred. Please try again.',
+      );
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -88,24 +130,64 @@ const SignupForm = () => {
           </p>
         </div>
         {/* Full Name */}
-        <FormField
-          control={form.control}
-          name="fullName"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Full Name</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="Write your full name"
-                  {...field}
-                  prefix={<User className="text-sidebar-foreground size-4" />}
-                  className="h-12"
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <div className="grid grid-cols-2 gap-4">
+          <FormField
+            control={form.control}
+            name="firstName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Full Name</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Write your full name"
+                    {...field}
+                    prefix={<User className="text-sidebar-foreground size-4" />}
+                    className="h-12"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="lastName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Last Name </FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Enter your last name"
+                    {...field}
+                    prefix={<User className="text-sidebar-foreground size-4" />}
+                    className="h-12 "
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="middleName"
+            render={({ field }) => (
+              <FormItem className="col-span-2">
+                <FormLabel>Middle Name (Optional)</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Enter your middle name"
+                    {...field}
+                    prefix={<User className="text-sidebar-foreground size-4" />}
+                    className="h-12"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
 
         {/* Email */}
         <FormField
@@ -195,19 +277,16 @@ const SignupForm = () => {
             </FormItem>
           )}
         />
-        <div className="flex justify-end">
-          <Link
-            href={'/auth/login'}
-            className="hover:text-chart-2 text-left text-sm hover:underline"
-          >
-            Already have account?
-          </Link>
-        </div>
 
         {/* Submit */}
         <div className="space-y-3">
-          <Button type="submit" size={'xl'} className="w-full font-bold">
-            <UserPlus />
+          <Button
+            type="submit"
+            size={'xl'}
+            className="w-full font-bold"
+            disabled={isLoading}
+          >
+            {isLoading ? <Loader2 className="animate-spin" /> : <UserPlus />}
             Register
           </Button>
           <Separator
@@ -230,7 +309,11 @@ const SignupForm = () => {
         <div className="flex justify-center gap-3 text-sm">
           Already have account?
           <Link
-            href={'/auth/login'}
+            href={
+              from
+                ? `/auth/login?from=${encodeURIComponent(from)}`
+                : '/auth/login'
+            }
             className="hover:text-chart-2 font-semibold text-black hover:underline"
           >
             Login
