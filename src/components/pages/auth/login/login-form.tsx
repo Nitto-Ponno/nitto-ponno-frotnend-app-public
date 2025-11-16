@@ -17,8 +17,14 @@ import {
 import { Input } from '@/components/ui/input';
 import Link from 'next/link';
 import GoogleIcon from '@/components/shared/svg/google-Icon';
-import { Eye, EyeClosedIcon, Lock, LogIn, Mail } from 'lucide-react';
+import { Eye, EyeClosedIcon, Loader2, Lock, LogIn, Mail } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
+import { instance } from '@/lib/axios/axiosInstance';
+import { toast } from 'sonner';
+import { AxiosError } from 'axios';
+import { useAppDispatch } from '@/redux/hook';
+import { setUser } from '@/redux/features/auth/authReducer';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 // Login Form Schema (Zod)
 // ===========================
@@ -32,6 +38,11 @@ export const loginFormSchema = z.object({
 /* ---------------- Component ---------------- */
 const LoginForm = () => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useAppDispatch();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const from = searchParams.get('from');
 
   const form = useForm<z.infer<typeof loginFormSchema>>({
     resolver: zodResolver(loginFormSchema),
@@ -41,8 +52,73 @@ const LoginForm = () => {
     },
   });
 
-  const handleSubmit = (values: z.infer<typeof loginFormSchema>) => {
-    // console.log(values);
+  /**
+   * Safely extracts and validates the redirect path from the 'from' parameter
+   * @param fromParam - The 'from' parameter value (could be full URL or path)
+   * @returns A safe internal path to redirect to, or '/' as fallback
+   */
+  const getSafeRedirectPath = (fromParam: string | null): string => {
+    if (!fromParam) return '/';
+
+    try {
+      // If it's a full URL, extract the pathname
+      let path = fromParam;
+      if (fromParam.startsWith('http://') || fromParam.startsWith('https://')) {
+        const url = new URL(fromParam);
+        path = url.pathname + url.search;
+      }
+
+      // Ensure it starts with '/' (internal path)
+      if (!path.startsWith('/')) {
+        return '/';
+      }
+
+      // Prevent redirect loops - don't redirect to auth pages
+      const authPaths = [
+        '/auth/login',
+        '/auth/signup',
+        '/auth/forget-password',
+        '/auth/verify',
+      ];
+      if (authPaths.some((authPath) => path.startsWith(authPath))) {
+        return '/';
+      }
+
+      // Basic validation: ensure it's a valid path (no protocol, no //, etc.)
+      if (path.includes('//') || path.includes('://')) {
+        return '/';
+      }
+
+      return path;
+    } catch (error) {
+      // If URL parsing fails, return default
+      return '/';
+    }
+  };
+
+  const handleSubmit = async (values: z.infer<typeof loginFormSchema>) => {
+    try {
+      setIsLoading(true);
+      const { data } = await instance.post('/auth/login', values);
+      if (data?.success) {
+        const { data: myData } = await instance.get('/auth/getMyData');
+        if (myData?.success) {
+          dispatch(setUser(myData?.data));
+        }
+
+        toast.success(data?.message);
+
+        setIsLoading(false);
+        const redirectPath = getSafeRedirectPath(from);
+        router?.push(redirectPath);
+      }
+    } catch (error) {
+      toast.error(
+        ((error as AxiosError).response?.data as { message?: string })
+          ?.message || 'An error occurred. Please try again.',
+      );
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -112,7 +188,11 @@ const LoginForm = () => {
 
         <div className="flex justify-end">
           <Link
-            href={'/auth/forget-password'}
+            href={
+              from
+                ? `/auth/forget-password?from=${encodeURIComponent(from)}`
+                : '/auth/forget-password'
+            }
             className="hover:text-chart-2 text-left text-sm hover:underline"
           >
             Forgot password?
@@ -121,8 +201,13 @@ const LoginForm = () => {
 
         {/* Submit */}
         <div className="space-y-3">
-          <Button type="submit" size={'xl'} className="w-full font-bold">
-            <LogIn />
+          <Button
+            type="submit"
+            size={'xl'}
+            disabled={isLoading}
+            className="w-full font-bold"
+          >
+            {isLoading ? <Loader2 className="animate-spin" /> : <LogIn />}
             Login
           </Button>
           <Separator
@@ -145,7 +230,11 @@ const LoginForm = () => {
         <div className="flex justify-center gap-3 text-sm">
           Don&apos;t have an account?
           <Link
-            href={'/auth/signup'}
+            href={
+              from
+                ? `/auth/signup?from=${encodeURIComponent(from)}`
+                : '/auth/signup'
+            }
             className="hover:text-chart-2 font-semibold text-black hover:underline"
           >
             Sign Up

@@ -1,10 +1,12 @@
 import ForgetPasswordForm from '@/components/pages/auth/forget-password/forget-password-form';
-import React from 'react';
+import React, { Suspense } from 'react';
 
 const ForgetPassword = () => {
   return (
     <div className="mx-auto w-lg">
-      <ForgetPasswordForm />
+      <Suspense fallback={null}>
+        <ForgetPasswordForm />
+      </Suspense>
     </div>
   );
 };

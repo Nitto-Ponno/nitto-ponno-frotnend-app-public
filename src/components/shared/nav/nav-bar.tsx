@@ -1,15 +1,18 @@
 'use client';
 import { Input } from '@/components/ui/input';
-import { Bell, Menu, Search, ShoppingBag, User, X } from 'lucide-react';
+import { Bell, Menu, Search, ShoppingBag, X } from 'lucide-react';
 import Image from 'next/image';
 import { useState } from 'react';
 import Link from 'next/link';
 import MobileNavMenu from './mobile-nav-menu';
 import SectionDropdownMenu from './section-dropdown-menu';
+import UserDropdownMenu from './user-dropdown-menu';
 import { Button } from '@/components/ui/button';
+import { useAppSelector } from '@/redux/hook';
 
 const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { isAuthenticated } = useAppSelector((state) => state.auth);
   return (
     <nav className="border-border bg-primary/30 supports-[backdrop-filter]:bg-primary/30 sticky top-0 z-50 border-b backdrop-blur">
       <div className="my-container">
@@ -54,9 +57,13 @@ const Navbar = () => {
             <Link href={'/cart'} aria-label="Cart">
               <ShoppingBag className="stroke-accent-foreground h-5 w-5" />
             </Link>
-            <span className="cursor-pointer">
-              <User className="stroke-accent-foreground h-5 w-5" />
-            </span>
+            {isAuthenticated ? (
+              <UserDropdownMenu />
+            ) : (
+              <Link href="/auth/login">
+                <span className="cursor-pointer">Login</span>
+              </Link>
+            )}
           </div>
           {/* search */}
 
