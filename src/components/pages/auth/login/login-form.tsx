@@ -25,6 +25,7 @@ import { AxiosError } from 'axios';
 import { useAppDispatch } from '@/redux/hook';
 import { setUser } from '@/redux/features/auth/authReducer';
 import { useRouter, useSearchParams } from 'next/navigation';
+import Cookies from 'js-cookie';
 
 // Login Form Schema (Zod)
 // ===========================
@@ -101,6 +102,10 @@ const LoginForm = () => {
       setIsLoading(true);
       const { data } = await instance.post('/auth/login', values);
       if (data?.success) {
+        Cookies.set(
+          process.env.NEXT_PUBLIC_AUTH_TOKEN_NAME as string,
+          data?.data?.accessToken,
+        );
         const { data: myData } = await instance.get('/auth/getMyData');
         if (myData?.success) {
           dispatch(setUser(myData?.data));

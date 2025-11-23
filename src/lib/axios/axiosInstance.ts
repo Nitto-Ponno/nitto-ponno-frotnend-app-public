@@ -6,6 +6,7 @@ import Cookies from 'js-cookie';
 const instance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL_LOCAL,
   withCredentials: true,
+  timeout: 60000,
   headers: {
     'Content-Type': 'application/json',
     Accept: 'application/json',
@@ -28,19 +29,6 @@ instance.interceptors.request.use(async (config) => {
   if (token) {
     config.headers['Authorization'] = `Bearer ${token}`;
   }
-
-  // const enroll = await storage.getItem('active_enrolment');
-  // const enrollId = enroll?._id;
-
-  // if (enrollId) {
-  //   config.headers['enrollment'] = enrollId;
-  // }
-
-  // const selectedOrganization = Cookies.get('activeCompany');
-
-  // if (selectedOrganization) {
-  //   config.headers['organization'] = `${selectedOrganization}`;
-  // }
 
   return config;
 });
