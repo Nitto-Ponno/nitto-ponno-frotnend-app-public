@@ -9,7 +9,7 @@ const OurServices = () => {
         name: 'Laundry',
         _id: '11',
         icon: <LaundryIcon className="size-14" />,
-        link: '/services/laundry',
+        link: '/services/laundryService',
       },
       {
         name: 'Pharmacy',

@@ -5,6 +5,7 @@ import { ProductCard } from '@/components/pages/single-services/product-card';
 import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { instance } from '@/lib/axios/axiosInstance';
 
 const productItems = {
   laundry: [
@@ -40,7 +41,15 @@ const seletedProductsBySection = products.filter(
   (product) => product.section === 'laundry',
 );
 
-const ServicePage = () => {
+const ServicePage = async ({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) => {
+  const { slug } = await params;
+
+  const res = await instance.get(`/${slug}`);
+  console.log(res?.data?.data);
   return (
     <div className="my-container">
       <div className="grid grid-cols-1 gap-6 md:grid-cols-4 lg:grid-cols-5">

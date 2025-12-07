@@ -22,6 +22,7 @@ const Banner = ({ banners }: { banners: { _id: string; image: string }[] }) => {
                     height={1080}
                     alt="Banner Image"
                     className="h-full w-full "
+                    priority
                   />
                 </div>
               </CarouselItem>

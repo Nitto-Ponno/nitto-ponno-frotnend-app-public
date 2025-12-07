@@ -4,6 +4,7 @@ import NextTopLoader from 'nextjs-toploader';
 import './globals.css';
 import { Toaster } from '@/components/ui/sonner';
 import MainProvider from '@/components/providers/main-provider';
+import { NuqsAdapter } from 'nuqs/adapters/next';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -26,12 +27,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} `}>
-        <NextTopLoader showSpinner={false} />
-        <MainProvider>{children}</MainProvider>
-        <Toaster position="top-right" />
-      </body>
-    </html>
+    <NuqsAdapter>
+      <html lang="en">
+        <body className={`${geistSans.variable} ${geistMono.variable} `}>
+          <NextTopLoader showSpinner={false} />
+          <MainProvider>{children}</MainProvider>
+          <Toaster position="top-right" />
+        </body>
+      </html>
+    </NuqsAdapter>
   );
 }
